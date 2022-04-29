@@ -9,28 +9,41 @@ import About from './components/About'
 
 const App = () => {
   const [showAddTask, setShowAddTask] = useState(false)
-  const [tasks, setTasks] = useState([])
+  // const [tasks, setTasks] = useState([])
 
-  // useEffects is used to create side effects in React.
-useEffect(() => {     
-  const getTasks =  async () => {
-  const tasksFromServer = await fetchTasks()
-  setTasks(tasksFromServer)
-}
-    getTasks()
-      // Add dependency array, but it passes an empty array, so it will only run once.
-  }, [])
+
+  const [tasks, setTasks] = useState(() => {
+    // getting stored value
+    const saved = localStorage.getItem("tasks");
+    const initialValue = JSON.parse(saved);
+    return initialValue || "";
+  });
+
+// useEffects is used to create side effects in React.
+// This will fetch data on a component mount on the first render.
+// useEffect(() => {     
+//   const getTasks =  async () => {
+//   const tasksFromServer = await fetchTasks()
+//   setTasks(tasksFromServer);
+// }
+//     getTasks()
+//       // Add dependency array, but it passes an empty array, so it will only run once.
+//   }, [])
+
+  useEffect(() => {
+    // storing input tasks in local storage
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+  }, [tasks]);
  
 
-  //Fetch tasks from the server
-  const fetchTasks = async () => {
-    const res = await fetch('http://localhost:5000/tasks');
-    // const res = await fetch('');
-    const data = await res.json()
+  // //Fetch tasks from the server
+  // const fetchTasks = async () => {
+  //   const res = await fetch('http://localhost:5000/tasks');
+  //   // const res = await fetch('');
+  //   const data = await res.json()
 
-    return data
-    }
-
+  //   return data
+  //   }
 
  //Fetch a single tasks from the server
   const fetchTask = async (id) => {
@@ -41,35 +54,39 @@ useEffect(() => {
     }
 
 //Add Task
-const addTask = async (task) => {
-  const res = await fetch('http://localhost:5000/tasks', 
-  {
-    method: 'POST',
-    headers: {
-      'Content-type': 'application/json',
-    },
-    body: JSON.stringify(task),
-  })
-// get the data from the server
-  const data =  await res.json()
+// const addTask = async (task) => {
+//   const res = await fetch('http://localhost:5000/tasks', 
+//   {
+//     method: 'POST',
+//     headers: {
+//       'Content-type': 'application/json',
+//     },
+//     body: JSON.stringify(task),
+//   })
+// // get the data from the server
+//   const data =  await res.json() 
 
-  setTasks([...tasks, data])
+//   setTasks([...tasks, data])
 
-
-  // const id = Math.floor(Math.random() * 1000) + 1
-  // const newTask = { id, ...task}
-  // setTasks([...tasks, newTask]) // using the setTask method to get an array of tasks
+const addTask = (task) => {
+  const id = Math.floor(Math.random() * 1000) + 1
+  const newTask = { id, ...task}
+  setTasks([...tasks, newTask]) // using the setTask method to get an array of tasks
 } 
 
 //Delete Task
-const deleteTask = async (id) => {
-const res = await fetch(`http://localhost:5000/tasks/${id}`, {
-  method: 'DELETE'
-})
-res.status === 200
-  ? setTasks(tasks.filter((task) => task.id !== id))
-  : alert('Error Deleting Task')
+// const deleteTask = async (id) => {
+// const res = await fetch(`http://localhost:5000/tasks/${id}`, {
+//   method: 'DELETE'
+// })
+// res.status === 200
+//   ? setTasks(tasks.filter((task) => task.id !== id))
+//   : alert('Error Deleting Task')
   
+// }
+
+const deleteTask = (id) => {
+  setTasks(tasks.filter((task) => task.id !== id))
 }
 
 // Toggle reminder

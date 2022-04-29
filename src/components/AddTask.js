@@ -20,6 +20,17 @@ const onSubmit = (e) => {
     return
   }
 
+  if (!day) {
+    alert('Please enter day and time');
+    return
+  } 
+
+  if (!reminder) {
+    alert('please check reminder');
+    return
+  }
+  
+
   onAdd({title, place, day, reminder})
 
   // clear the form
